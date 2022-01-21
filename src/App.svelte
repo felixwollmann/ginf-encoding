@@ -89,7 +89,7 @@
       pattern="(([01])&lbrace;5&rbrace; ?)*"
       type="text"
       bind:value={codeInput}
-      on:keyup={() => {
+      on:input={() => {
         text = toString(toArray(codeInput));
       }}
       placeholder="Binar"
@@ -104,7 +104,7 @@
       type="text"
       pattern="[ ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.,:\-#]*"
       bind:value={text}
-      on:keyup={() => {
+      on:input={() => {
         codeInput = arrayToString(fromString(text));
       }}
       placeholder="Text"
