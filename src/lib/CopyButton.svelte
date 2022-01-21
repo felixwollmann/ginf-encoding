@@ -41,7 +41,7 @@
     }
 
     div.icon-container:hover {
-        background-color: #3d2645;
+        background-color: #832161;
     }
 
     div.icon-container.success {
