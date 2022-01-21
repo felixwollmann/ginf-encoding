@@ -92,7 +92,7 @@
       on:input={() => {
         text = toString(toArray(codeInput));
       }}
-      placeholder="Binar"
+      placeholder="Binärcode"
       id="codeInput"
     />
     <CopyButton output={codeInput} />
