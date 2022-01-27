@@ -1,12 +1,25 @@
 <script>
   import CopyButton from "./lib/CopyButton.svelte";
+  import SelectOption from "./lib/SelectOption.svelte";
 
   const map = new Map();
 
-  const values = " ABCDEFGHIJKLMNOPQRSTUVWXYZ.,:-#";
+  let encodingString = " ABCDEFGHIJKLMNOPQRSTUVWXYZ.,:-#";
 
-  for (let i = 0; i < 32; i++) {
-    map.set(i, values[i]);
+  $: length = getLength(encodingString.length);
+
+  $: shouldUpperCase = encodingString == " ABCDEFGHIJKLMNOPQRSTUVWXYZ.,:-#";
+
+  function getLength(length) {
+    if (length <= 0) length = 1;
+    return Math.ceil(Math.log2(length));
+  }
+
+  $: {
+    map.clear();
+    for (let i = 0; i < encodingString.length; i++) {
+      map.set(i, encodingString[i]);
+    }
   }
 
   /**
@@ -16,13 +29,16 @@
    */
   function fromString(input) {
     const output = [];
-    Array.from(input.toUpperCase()).forEach((char) => {
-      map.forEach((val, key) => {
+    if (shouldUpperCase) {
+      input = input.toUpperCase();
+    }
+    Array.from(input).forEach((char) => {
+      for (const [key, val] of map.entries()) {
         if (char == val) {
           output.push(key);
           return;
         }
-      });
+      }
     });
     return output;
   }
@@ -34,8 +50,8 @@
     const array = [];
     input = input.replaceAll(/[^01]/g, "");
 
-    for (let i = 0; i < input.length; i += 5) {
-      array.push(parseInt(input.substring(i, i + 5), 2));
+    for (let i = 0; i < input.length; i += length) {
+      array.push(parseInt(input.substring(i, i + length), 2));
     }
 
     return array;
@@ -54,8 +70,18 @@
 
   function arrayToString(input) {
     return input
-      .map((val) => "0".repeat(5 - val.toString(2).length) + val.toString(2))
+      .map(
+        (val) => "0".repeat(length - val.toString(2).length) + val.toString(2)
+      )
       .join(" ");
+  }
+
+  function escapeRegExp(text) {
+    for (let char of "[]{}()\\^$.|?*+-") {
+      text = text.replace(char, "\\" + char);
+    }
+    return text;
+    // return text.replace();
   }
 
   let codeInput;
@@ -86,7 +112,7 @@
   <label for="codeInput">Binärcode</label>
   <div class="input-container">
     <input
-      pattern="(([01])&lbrace;5&rbrace; ?)*"
+      pattern={`(([01]){${length}} ?)*`}
       type="text"
       bind:value={codeInput}
       on:input={() => {
@@ -102,7 +128,7 @@
   <div class="input-container">
     <input
       type="text"
-      pattern="[ ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.,:\-#]*"
+      pattern={`[${escapeRegExp(encodingString)}]*`}
       bind:value={text}
       on:input={() => {
         codeInput = arrayToString(fromString(text));
@@ -112,6 +138,8 @@
     />
     <CopyButton output={text} />
   </div>
+
+  <SelectOption bind:encodingString />
 </main>
 
 <style>
