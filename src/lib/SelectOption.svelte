@@ -84,9 +84,11 @@
     label {
         display: block;
         padding: 10px;
-        background-color: #ddd;
+        background-color: hsl(252, 19%, 100%);
         margin: 5px 0px;
         border-radius: 10px;
+        box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+
     }
 
     input {

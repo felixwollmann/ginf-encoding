@@ -128,7 +128,7 @@
   <div class="input-container">
     <input
       type="text"
-      pattern={`[${escapeRegExp(encodingString)}]*`}
+      pattern={`[${escapeRegExp(encodingString)}${shouldUpperCase ? escapeRegExp(encodingString).toLowerCase() : ''}${shouldUpperCase ? escapeRegExp(encodingString).toUpperCase() : ''}]*`}
       bind:value={text}
       on:input={() => {
         codeInput = arrayToString(fromString(text));
@@ -144,7 +144,6 @@
 
 <style>
   main {
-    background-color: #eee;
     border-radius: 15px;
     padding: 2rem;
     /* width: 400px; */
